@@ -43,7 +43,6 @@ public class Ex1 {
      * This function computes an x value (x1<=x<=x2) for which |p(x)| < eps,
      * assuming p(x1)*p(x2) <= 0.
      * This function should be implemented recursively.
-     *
      * @param p   - the polynomial function
      * @param x1  - minimal value of the range
      * @param x2  - maximal value of the range
@@ -199,8 +198,20 @@ public class Ex1 {
     /**
      * This function computes the polynomial function which is the sum of two polynomial functions (p1,p2)
      *
-     * @param p1
-     * @param p2
+     * add(double[], p2[])
+     *     if (p1 == null && p2 == null) /// T && T == T
+     *     return ZERO /// return {0}
+     *     if (p1 == null && p2!=null )
+     *          ans = p2
+     *     if (p2 == null && p1!=null )
+     *          ans = p1
+     *      len=p1.length-p2.length ///
+     *      ans = new double[p1.length] /// because p1 is longer so it has the max elements that ans will have when we add p1+p2
+     *      for(i=0; i<len; i++) /// we will run this loop len times because we want to add all the elements from the first element of p1 which dont have a the same power as in p2
+     *          ans[i] = p1[i] /// put into ans the first len elements from p1 because p2 has no elements in these pow
+     *      for(i=0; i<p2.length; i++) ///we will run this loop p2.length times because we want to add all the elements from the first element of p2
+     *          ans[i+len] = p2[i] + p1[i+len] /// add the rest of the elements from p1 and p2
+     *      return ans
      * @return
      */
     public static double[] add(double[] p1, double[] p2) {
@@ -229,18 +240,29 @@ public class Ex1 {
     /**
      * This function computes the derivative of the p0 polynomial function.
      *
-     * @param po
-     * @return
+     * derivative(po[] /// ={1,2,3} represents 3x^2 +2x +1)
+     *       ans = ZERO /// ans = {0}
+     *       if (po != null && po.length > 1) /// T && T ==T
+     *             len = po.length /// len = 3
+     *             ans = new double[len - 1] /// ans = new double[2] /// ans = {0,0}
+     *             for (i = 0; i < ans.length; i=i+1)
+     *                  ans[i] = po[i + 1] * (i + 1) /// ans[0] = po[1]*1 = 2*1 =2 , ans[1] = po[2]*2 = 3*2=6
+     *       return ans /// ans = {2,6} represents 6x +2
      */
     public static double[] derivative(double[] po) {
         double[] ans = ZERO;
+        /// check if po is not empty and has more than one element in it
         if (po != null && po.length > 1) {
             int len = po.length;
+            /// create the answer array with length less by one because the derivative degree is less by one than the original polynom
             ans = new double[len - 1];
+            /// compute the derivative using the power rule of derivatives ([a*x^n] = n*a*x^(n-1) )
             for (int i = 0; i < ans.length; i += 1) {
+                /// puts into array ans the num from the place po[1] to the end multiplied by its degree (i+1)
                 ans[i] = po[i + 1] * (i + 1);
             }
         }
+        /// return the derivative polynom in a new array
         return ans;
     }
 }
