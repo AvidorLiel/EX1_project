@@ -197,28 +197,61 @@ public class Ex1 {
 
     /**
      * This function computes the polynomial function which is the sum of two polynomial functions (p1,p2)
+
+     *public static void replace(double[], double[]) /// the function is void because it (will\will not) just swap the references of the two polynoms
+     *    /// if (p1.length > p2.length || p1.length == p2.length) then continue as it is
+     *    else if(p2.length > p1.length)
+     *      temp = p1
+     *      p1 = p2
+     *      p2 = temp
      *
-     * add(double[], p2[])
-     *     if (p1 == null && p2 == null) /// T && T == T
+     * add(p1[], p2[])
+     *     if (p1 == null && p2 == null)
      *     return ZERO /// return {0}
      *     if (p1 == null && p2!=null )
      *          ans = p2
      *     if (p2 == null && p1!=null )
      *          ans = p1
-     *      len=p1.length-p2.length ///
-     *      ans = new double[p1.length] /// because p1 is longer so it has the max elements that ans will have when we add p1+p2
-     *      for(i=0; i<len; i++) /// we will run this loop len times because we want to add all the elements from the first element of p1 which dont have a the same power as in p2
-     *          ans[i] = p1[i] /// put into ans the first len elements from p1 because p2 has no elements in these pow
-     *      for(i=0; i<p2.length; i++) ///we will run this loop p2.length times because we want to add all the elements from the first element of p2
-     *          ans[i+len] = p2[i] + p1[i+len] /// add the rest of the elements from p1 and p2
+     *      len=p1.length-p2.length
+     *      ans = new double[p1.length]
+     *      for(i=0; i<len; i++)
+     *          ans[i] = p1[i]
+     *      for(i=0; i<p2.length; i++)
+     *          ans[i+len] = p2[i] + p1[i+len]
      *      return ans
      * @return
      */
+    /// to make sure that p1 is the longer polynom I will write a function named replace
+    public static void replace(double[] p1, double[] p2) { /// the function is void because it (will\will not) just swap the references of the two polynoms
+    /// if (p1.length > p2.length || p1.length == p2.length) then continue as it is
+        if (p2.length > p1.length) {
+            double[] temp = p1;
+            p1 = p2;
+            p2 = temp;
+        }
+    }
     public static double[] add(double[] p1, double[] p2) {
-        double[] ans = ZERO;//
-        /** add you code below
+        double[] ans;
+        replace(p1, p2); /// make sure that p1 is the longer polynom
+        if (p1 == null && p2 == null)
+          return ZERO; /// return {0}
+        if (p1 == null && p2!=null )
+               ans = p2; /// if p1 is empty return p2 bcause p2 + 0 = p2
+        if (p2 == null && p1!=null )
+               ans = p1; /// if p2 is empty return p1 because p1 + 0 = p1
 
-         /////////////////// */
+        int len=p1.length-p2.length; /// here we find the difference between the lengths of p1 and p
+        ans = new double[p1.length]; /// because p1 is longer so it has the max elements that ans will have when we add p1+p2
+        if(len!=0) { /// check if len is not zero because if it is zero that means that both polynoms have the same length so there is no need to add the first len elements from p1 to ans
+            for (int i = 0; i < len; i++) { /// we will run this loop len times because we want to add all the elements from the first element of p1 which dont have a the same power as in p2
+                ans[i] = p1[i]; /// put into ans the first len elements from p1 because p2 has no elements in these pow
+            }
+        }
+        for(int i=0; i<p2.length; i++) { ///we will run this loop p2.length times because we want to add all the elements from the first element of p2
+            ans[i + len] = p2[i] + p1[i + len]; /// add the rest of the elements from p1 and p2
+        }
+
+
         return ans;
     }
 
