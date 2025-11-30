@@ -48,136 +48,35 @@ public class Ex1 {
      * @param x2  - maximal value of the range
      * @param eps - epsilon (positive small value (often 10^-3, or 10^-6).
      * @return an x value (x1<=x<=x2) for which |p(x)| < eps.
+     *
+     *
+     * mid = (x1 + x2) / 2
+     *  if |f(mid)| < eps:
+     *      return mid
+     *  if f(x1)*f(mid) <= 0:
+     *      recurse on [x1, mid]
+     *  else:
+     *      recurse on [mid, x2]
      */
     public static double root_rec(double[] p, double x1, double x2, double eps) {
-        double f1 = f(p, x1);
-        double x12 = (x1 + x2) / 2;
-        double f12 = f(p, x12);
-        if (Math.abs(f12) < eps) {
-            return x12;
+        double f1 = f(p,x1); /// compute f(x1)
+        double x12 = (x1+x2)/2; /// compute the mid point
+        double f12 = f(p,x12); /// compute f(mid)
+        if (Math.abs(f12)<eps) /// check if |f(mid)| < eps
+        {
+            return x12; /// return mid
         }
-        if (f12 * f1 <= 0) {
-            return root_rec(p, x1, x12, eps);
-        } else {
-            return root_rec(p, x12, x2, eps);
+        if(f12*f1<=0) /// check if f(x1)*f(mid) <= 0
+        {
+            return root_rec(p, x1, x12, eps); /// recurse on [x1, mid]
+        }
+        else
+        {
+            return root_rec(p, x12, x2, eps); /// recurse on [mid, x2]
         }
     }
 
-    /**
-     * This function computes a polynomial representation from a set of 2D points on the polynom.
-     * The solution is based on: //	http://stackoverflow.com/questions/717762/how-to-calculate-the-vertex-of-a-parabola-given-three-points
-     * Note: this function only works for a set of points containing up to 3 points, else returns null.
-     *
-     * @param xx
-     * @param yy
-     * @return an array of doubles representing the coefficients of the polynom.
-     */
-    public static double[] PolynomFromPoints(double[] xx, double[] yy) {
-        double[] ans = null;
-        int lx = xx.length;
-        int ly = yy.length;
-        if (xx != null && yy != null && lx == ly && lx > 1 && lx < 4) {
-            /** add you code below
 
-             /////////////////// */
-        }
-        return ans;
-    }
-
-    /**
-     * Two polynomials functions are equal if and only if they have the same values f(x) for n+1 values of x,
-     * where n is the max degree (over p1, p2) - up to an epsilon (aka EPS) value.
-     *
-     * @param p1 first polynomial function
-     * @param p2 second polynomial function
-     * @return true iff p1 represents the same polynomial function as p2.
-     */
-    public static boolean equals(double[] p1, double[] p2) {
-        boolean ans = true;
-        /** add you code below
-
-         /////////////////// */
-        return ans;
-    }
-
-    /**
-     * Computes a String representing the polynomial function.
-     * For example the array {2,0,3.1,-1.2} will be presented as the following String  "-1.2x^3 +3.1x^2 +2.0"
-     *
-     * @param poly the polynomial function represented as an array of doubles
-     * @return String representing the polynomial function:
-     */
-    public static String poly(double[] poly) {
-        String ans = "";
-        if (poly.length == 0) {
-            ans = "0";
-        } else {
-            /** add you code below
-
-             /////////////////// */
-        }
-        return ans;
-    }
-
-    /**
-     * Given two polynomial functions (p1,p2), a range [x1,x2] and an epsilon eps. This function computes an x value (x1<=x<=x2)
-     * for which |p1(x) -p2(x)| < eps, assuming (p1(x1)-p2(x1)) * (p1(x2)-p2(x2)) <= 0.
-     *
-     * @param p1  - first polynomial function
-     * @param p2  - second polynomial function
-     * @param x1  - minimal value of the range
-     * @param x2  - maximal value of the range
-     * @param eps - epsilon (positive small value (often 10^-3, or 10^-6).
-     * @return an x value (x1<=x<=x2) for which |p1(x) - p2(x)| < eps.
-     */
-    public static double sameValue(double[] p1, double[] p2, double x1, double x2, double eps) {
-        double ans = x1;
-        /** add you code below
-
-         /////////////////// */
-        return ans;
-    }
-
-    /**
-     * Given a polynomial function (p), a range [x1,x2] and an integer with the number (n) of sample points.
-     * This function computes an approximation of the length of the function between f(x1) and f(x2)
-     * using n inner sample points and computing the segment-path between them.
-     * assuming x1 < x2.
-     * This function should be implemented iteratively (none recursive).
-     *
-     * @param p                - the polynomial function
-     * @param x1               - minimal value of the range
-     * @param x2               - maximal value of the range
-     * @param numberOfSegments - (A positive integer value (1,2,...).
-     * @return the length approximation of the function between f(x1) and f(x2).
-     */
-    public static double length(double[] p, double x1, double x2, int numberOfSegments) {
-        double ans = x1;
-        /** add you code below
-
-         /////////////////// */
-        return ans;
-    }
-
-    /**
-     * Given two polynomial functions (p1,p2), a range [x1,x2] and an integer representing the number of Trapezoids between the functions (number of samples in on each polynom).
-     * This function computes an approximation of the area between the polynomial functions within the x-range.
-     * The area is computed using Riemann's like integral (https://en.wikipedia.org/wiki/Riemann_integral)
-     *
-     * @param p1                - first polynomial function
-     * @param p2                - second polynomial function
-     * @param x1                - minimal value of the range
-     * @param x2                - maximal value of the range
-     * @param numberOfTrapezoid - a natural number representing the number of Trapezoids between x1 and x2.
-     * @return the approximated area between the two polynomial functions within the [x1,x2] range.
-     */
-    public static double area(double[] p1, double[] p2, double x1, double x2, int numberOfTrapezoid) {
-        double ans = 0;
-        /** add you code below
-
-         /////////////////// */
-        return ans;
-    }
 
     /**
      * This function computes the array representation of a polynomial function from a String
@@ -186,12 +85,73 @@ public class Ex1 {
      *
      * @param p - a String representing polynomial function.
      * @return
+     *
+     *  split string into terms by +/-
+     *  parse coefficient and power for each term
+     *  accumulate into array
      */
     public static double[] getPolynomFromString(String p) {
-        double[] ans = ZERO;//  -1.0x^2 +3.0x +2.0
-        /** add you code below
+        if (p == null || p.trim().isEmpty()) /// check for null or empty string
+            return new double[]{0};
 
-         /////////////////// */
+        p = p.replace(" ", ""); /// remove spaces
+
+        java.util.List<String> terms = new java.util.ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < p.length(); i++) { /// split string into terms by +/-
+            char c = p.charAt(i);
+            if ((c == '+' || c == '-') && sb.length() > 0) { /// new term
+                terms.add(sb.toString());
+                sb.setLength(0);
+            }
+            sb.append(c);
+        }
+        if (sb.length() > 0) terms.add(sb.toString()); /// add last term
+
+        java.util.Map<Integer, Double> coeffMap = new java.util.HashMap<>();
+        int maxPower = 0;
+
+        for (String term : terms) { /// parse coefficient and power for each term
+            if (term.isEmpty()) continue;
+
+            double sign = 1.0;
+            if (term.charAt(0) == '-') { /// handle sign
+                sign = -1.0;
+                term = term.substring(1);
+            } else if (term.charAt(0) == '+') { /// handle sign
+                term = term.substring(1);
+            }
+
+            double coeff = 0.0;
+            int power = 0;
+
+            if (term.contains("x")) { /// parse x term
+                String[] parts = term.split("x");
+                if (parts[0].isEmpty()) /// handle coefficient
+                    coeff = 1.0;
+                else /// handle coefficient
+                    coeff = Double.parseDouble(parts[0]);
+
+                if (parts.length > 1 && parts[1].startsWith("^")) { /// handle power
+                    power = Integer.parseInt(parts[1].substring(1));
+                }
+                else { /// handle power
+                    power = 1;
+                }
+            } else { /// constant term
+                coeff = Double.parseDouble(term);
+                power = 0;
+            }
+
+            coeff *= sign; /// apply sign
+            coeffMap.put(power, coeffMap.getOrDefault(power, 0.0) + coeff); /// accumulate into array
+            maxPower = Math.max(maxPower, power); /// update max power
+        }
+
+        double[] ans = new double[maxPower + 1]; /// create result array
+        for (int i = 0; i <= maxPower; i++) { /// fill result array
+            ans[i] = coeffMap.getOrDefault(i, 0.0); /// get coefficient
+        }
         return ans;
     }
 
