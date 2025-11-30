@@ -72,7 +72,79 @@ class Ex1Test {
 		double[] p1 = Ex1.add(po1, Ex1.ZERO);
 		assertTrue(Ex1.equals(p1, po1));
 	}
-	@Test
+
+    //-------------------------tests add--------------------------------
+    @Test
+    void testCompactRemovesTrailingZeros() {
+        double[] p = {1, 2, 3, 0, 0};           /// [1] Polynomial with unnecessary zeros at the end
+        double[] expected = {1, 2, 3};          /// [2] Expected result after compact: only non-zero coefficients remain
+        assertTrue(Ex1.equals(Ex1.compact(p), expected)); /// [3] Verify compact removes trailing zeros correctly
+    }
+
+
+    @Test
+    void testCompactAllZeros() {
+        double[] p = {0, 0, 0};                 /// [1] Polynomial with only zeros
+        double[] expected = {0};                /// [2] Expected result: single zero (representing zero polynomial)
+        assertTrue(Ex1.equals(Ex1.compact(p), expected)); /// [3] Verify compact handles all-zero input correctly
+    }
+
+
+    @Test
+    void testAddSameLengthAfterCompact() {
+        double[] p1 = {1, 2, 3, 0, 0};          /// [1] Polynomial with trailing zeros
+        double[] p2 = {4, 5, 6, 0};             /// [2] Another polynomial with trailing zeros
+        double[] expected = {5, 7, 9};          /// [3] Expected sum after compact: (1+4), (2+5), (3+6)
+        assertTrue(Ex1.equals(Ex1.add(p1, p2), expected)); /// [4] Verify add works correctly after compacting both inputs
+    }
+
+
+    @Test
+    void testAddDifferentLengthAfterCompact() {
+        double[] p1 = {1, 2, 3, 4, 0, 0};       /// [1] Longer polynomial with trailing zeros
+        double[] p2 = {5, 6, 0};                /// [2] Shorter polynomial with trailing zeros
+        double[] expected = {1, 2, 8, 10};      /// [3] Expected sum: first two terms stay, then (3+5)=8, (4+6)=10
+        assertTrue(Ex1.equals(Ex1.add(p1, p2), expected)); /// [4] Verify add handles different lengths after compact
+    }
+
+
+    @Test
+    void testAddWithNullInputs() {
+        double[] p1 = null;                     /// [1] First polynomial is null
+        double[] p2 = {1, 2, 0};                /// [2] Second polynomial with trailing zero
+        double[] expected = {1, 2};             /// [3] Expected result after compact: {1, 2}
+        assertTrue(Ex1.equals(Ex1.add(p1, p2), expected)); /// [4] Verify add returns p2 when p1 is null
+    }
+
+///
+    @Test
+    void testAddBothNull() {
+        double[] p1 = null;                     /// [1] First polynomial is null
+        double[] p2 = null;                     /// [2] Second polynomial is null
+        double[] expected = {0};                /// [3] Expected result: ZERO polynomial
+        assertTrue(Ex1.equals(Ex1.add(p1, p2), expected)); /// [4] Verify add returns ZERO when both inputs are null
+    }
+
+
+    @Test
+    void testAddEmptyArrays() {
+        double[] p1 = {};                       /// [1] First polynomial is empty
+        double[] p2 = {1, 2, 0};                /// [2] Second polynomial with trailing zero
+        double[] expected = {1, 2};             /// [3] Expected result after compact: {1, 2}
+        assertTrue(Ex1.equals(Ex1.add(p1, p2), expected)); /// [4] Verify empty array behaves like zero
+    }
+
+
+    @Test
+    void testAddNegativeValuesAfterCompact() {
+        double[] p1 = {-1, -2, -3, 0};          /// [1] Polynomial with negative coefficients and trailing zero
+        double[] p2 = {4, 5, 6, 0};             /// [2] Polynomial with positive coefficients and trailing zero
+        double[] expected = {3, 3, 3};          /// [3] Expected sum: (-1+4), (-2+5), (-3+6)
+        assertTrue(Ex1.equals(Ex1.add(p1, p2), expected)); /// [4] Verify add works with negatives after compact
+    }
+//-------------------------end of tests add--------------------------------
+
+    @Test
 	/**
 	 * Tests that p1*0 == 0
 	 */
@@ -104,6 +176,7 @@ class Ex1Test {
 			assertEquals(f12x, f1x*f2x, Ex1.EPS);
 		}
 	}
+
 	@Test
 	/**
 	 * Tests a simple derivative examples - till ZERO.
@@ -119,6 +192,56 @@ class Ex1Test {
 		assertTrue(Ex1.equals(Ex1.ZERO, dp3));
 		assertTrue(Ex1.equals(dp4, dp3));
 	}
+    //-------------------------tests derivative--------------------------------
+
+    @Test
+    void testDerivativeNullInput() {
+        double[] p = null;                           /// [1] Polynomial is null
+        double[] expected = {0};                    /// [2] Expected result: ZERO polynomial
+        assertTrue(Ex1.equals(Ex1.derivative(p), expected)); /// [3] Verify derivative of null returns ZERO
+    }
+
+    @Test
+    void testDerivativeConstantPolynomial() {
+        double[] p = {5};                           /// [1] Polynomial is constant: 5
+        double[] expected = {0};                    /// [2] Derivative of constant is zero
+        assertTrue(Ex1.equals(Ex1.derivative(p), expected)); /// [3] Verify derivative of constant returns ZERO
+    }
+
+    @Test
+    void testDerivativeEmptyArray() {
+        double[] p = {};                            /// [1] Polynomial is empty
+        double[] expected = {0};                    /// [2] Expected result: ZERO polynomial
+        assertTrue(Ex1.equals(Ex1.derivative(p), expected)); /// [3] Verify derivative of empty array returns ZERO
+    }
+
+    @Test
+    void testDerivativeWithZeros() {
+        double[] p = {1, 0, 3};                     /// [1] Polynomial: 3x² + 0x + 1
+        double[] expected = {0, 6};                 /// [2] Derivative: 6x + 0
+        assertTrue(Ex1.equals(Ex1.derivative(p), expected)); /// [3] Verify derivative handles zeros correctly
+    }
+
+    @Test
+    void testDerivativeNegativeCoefficients() {
+        double[] p = {-1, -2, -3};                  /// [1] Polynomial: -3x² - 2x - 1
+        double[] expected = {-2, -6};               /// [2] Derivative: -6x - 2
+        assertTrue(Ex1.equals(Ex1.derivative(p), expected)); /// [3] Verify derivative works with negative coefficients
+    }
+
+
+    @Test
+    void testDerivativeLargePolynomial() {
+        double[] p = {1, 2, 3, 4, 5};               /// [1] Polynomial: 5x⁴ + 4x³ + 3x² + 2x + 1
+        double[] expected = {2, 6, 12, 20};         /// [2] Derivative: 20x³ + 12x² + 6x + 2
+        assertTrue(Ex1.equals(Ex1.derivative(p), expected)); /// [3] Verify derivative works for large polynomials
+    }
+
+
+
+
+
+    //-------------------------end of tests derivative--------------------------------
 	@Test
 	/** 
 	 * Tests the parsing of a polynom in a String like form.
