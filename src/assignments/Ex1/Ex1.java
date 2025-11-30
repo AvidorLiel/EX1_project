@@ -1,4 +1,4 @@
-package assignments.Ex1;
+import java.util.Arrays;
 /**
  * Introduction to Computer Science 2026, Ariel University,
  * Ex1: arrays, static functions and JUnit
@@ -645,7 +645,7 @@ public class Ex1 {
      return ans
      */
 
-}
+
 
     public static double[] mul(double[] p1, double[] p2) {
 
@@ -755,4 +755,9 @@ public class Ex1 {
         /// return the derivative polynom in a new array
         return ans;
     }
+}
+
+void main() {
+}
+
 

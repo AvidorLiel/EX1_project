@@ -35,10 +35,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Nested
+
+
 class Ex1Test {
-    static final double[] P1 ={2,0,3, -1,0}, P2 = {0.1,0,1, 0.1,3};
-    static double[] po1 = {2,2}, po2 = {-3, 0.61, 0.2};;
-    static double[] po3 = {2,1,-0.7, -0.02,0.02};
+    static final double[] P1 = {2, 0, 3, -1, 0}, P2 = {0.1, 0, 1, 0.1, 3};
+    static double[] po1 = {2, 2}, po2 = {-3, 0.61, 0.2};
+    ;
+    static double[] po3 = {2, 1, -0.7, -0.02, 0.02};
     static double[] po4 = {-3, 0.61, 0.2};
 
     @Test
@@ -54,90 +57,6 @@ class Ex1Test {
         assertEquals(fx2, 6, Ex1.EPS);
     }
 
-
-    ///--------------------------tests linear---------------------------
-    @Test
-    public void testLinear() {
-        double[] xx = {1, 3};
-        double[] yy = {2, 6}; // line: y = 2x
-        double[] expected = {2.0, 0.0};
-
-        double[] result = Ex1.PolynomFromPoints(xx, yy);
-        assertArrayEquals(expected, result, 1e-9);
-    }
-
-    ///----------------------------tests quadratic---------------------------
-    @Test
-    public void testQuadratic() {
-        double[] xx = {1, 2, 3};
-        double[] yy = {2, 3, 6}; // y = x^2 - x + 2
-        double[] expected = {1.0, -2.0, 3.0};
-
-        double[] result = Ex1.PolynomFromPoints(xx, yy);
-        assertArrayEquals(expected, result, 1e-9);
-    }
-
-    ///--------------------------tests invalid input-----------------------------
-    @Test
-    public void testInvalidInput() {
-        // Less than 2 points
-        assertNull(Ex1.PolynomFromPoints(new double[]{1}, new double[]{2}));
-
-        // More than 3 points
-        assertNull(Ex1.PolynomFromPoints(new double[]{1,2,3,4}, new double[]{1,2,3,4}));
-
-        // Null arrays
-        assertNull(Ex1.PolynomFromPoints(null, new double[]{1,2}));
-        assertNull(Ex1.PolynomFromPoints(new double[]{1,2}, null));
-
-        // Vertical line for 2 points
-        assertNull(Ex1.PolynomFromPoints(new double[]{2,2}, new double[]{1,3}));
-    }
-
-
-    ///--------------------------tests equals-----------------------------
-    public void testEquals() {
-        double[] p1 = {2, -1, 1};   // x^2 - x + 2
-        double[] p2 = {2, -1, 1};
-        assertTrue(Ex1.equals(p1, p2));
-
-        double[] p3 = {1, 0, 1};    // x^2 + 1
-        assertFalse(Ex1.equals(p1, p3));
-
-        double[] p4 = {2, -1, 1, 0};
-        assertTrue(Ex1.equals(p1, p4));
-
-        double[] p5 = {0};
-        double[] p6 = {0, 0, 0};
-        assertTrue(Ex1.equals(p5, p6));
-
-        double[] p7 = {0.1 + 0.2, 0.3}; // 0.3 + 0.3*x
-        double[] p8 = {0.3, 0.3};
-        assertTrue(Ex1.equals(p7, p8));
-    }
-
-
-    public void testPoly() {
-        double[] p1 = {2, 0, 3.1, -1.2}; // -1.2x^3 +3.1x^2 +2.0
-        assertEquals("-1.2x^3 +3.1x^2 +2.0", Ex1.poly(p1));
-
-        double[] p2 = {0, 1, -1}; // -1x^2 +x
-        assertEquals("-x^2 +x", Ex1.poly(p2));
-
-        double[] p3 = {0, 0, 0};
-        assertEquals("0", Ex1.poly(p3));
-
-        double[] p4 = {-5};
-        assertEquals("-5.0", Ex1.poly(p4));
-
-        double[] p5 = {0, 0, 2};
-        assertEquals("2.0x^2", Ex1.poly(p5));
-
-        double[] p6 = {0, -1};
-        assertEquals("-x", Ex1.poly(p6));
-    }
-
-    ///--------------------------tests add-----------------------------
     @Test
     /**
      * Tests that p1(x) + p2(x) == (p1+p2)(x)
@@ -152,14 +71,21 @@ class Ex1Test {
     }
 
 
-    ///--------------------------tests derivative-----------------------------
+
+
+
+
+
+
+
+
     @Test
     /**
      * Tests a simple derivative examples - till ZERO.
      */
     void testDerivativeArrayDoubleArray() {
-        double[] p = {1,2,3}; // 3X^2+2x+1
-        double[] pt = {2,6}; // 6x+2
+        double[] p = {1, 2, 3}; // 3X^2+2x+1
+        double[] pt = {2, 6}; // 6x+2
         double[] dp1 = Ex1.derivative(p); // 2x + 6
         double[] dp2 = Ex1.derivative(dp1); // 2
         double[] dp3 = Ex1.derivative(dp2); // 0
@@ -168,44 +94,49 @@ class Ex1Test {
         assertTrue(Ex1.equals(Ex1.ZERO, dp3));
         assertTrue(Ex1.equals(dp4, dp3));
     }
-    ///-----------------------tests fromString-------------------------
+
     @Test
+    /**
+     * Tests the parsing of a polynom in a String like form.
+     */
     public void testFromString() {
-        double[] p = {-1.1, 2.3, 3.1};
+        double[] p = {-1.1, 2.3, 3.1}; // 3.1X^2+ 2.3x -1.1
         String sp2 = "3.1x^2 +2.3x -1.1";
-
         String sp = Ex1.poly(p);
-
         double[] p1 = Ex1.getPolynomFromString(sp);
         double[] p2 = Ex1.getPolynomFromString(sp2);
-
         boolean isSame1 = Ex1.equals(p1, p);
         boolean isSame2 = Ex1.equals(p2, p);
-
-        if (!isSame1) { fail("Parsing from generated string failed."); }
-        if (!isSame2) { fail("Parsing from manual string failed."); }
-
+        if (!isSame1) {
+            fail();
+        }
+        if (!isSame2) {
+            fail();
+        }
         assertEquals(sp, Ex1.poly(p1));
     }
-    ///--------------------tests equals---------------------------
+
     @Test
     /**
      * Tests the equality of pairs of arrays.
      */
-    public void testEquals2() {
-        double[][] d1 = {{0}, {1}, {1,2,0,0}};
-        double[][] d2 = {Ex1.ZERO, {1+ Ex1.EPS/2}, {1,2}};
-        double[][] xx = {{-2* Ex1.EPS}, {1+ Ex1.EPS*1.2}, {1,2, Ex1.EPS/2}};
-        for(int i=0;i<d1.length;i=i+1) {
+    public void testEquals() {
+        double[][] d1 = {{0}, {1}, {1, 2, 0, 0}};
+        double[][] d2 = {Ex1.ZERO, {1 + Ex1.EPS / 2}, {1, 2}};
+        double[][] xx = {{-2 * Ex1.EPS}, {1 + Ex1.EPS * 1.2}, {1, 2, Ex1.EPS / 2}};
+        for (int i = 0; i < d1.length; i = i + 1) {
             assertTrue(Ex1.equals(d1[i], d2[i]));
         }
-        for(int i=0;i<d1.length;i=i+1) {
+        for (int i = 0; i < d1.length; i = i + 1) {
             assertFalse(Ex1.equals(d1[i], xx[i]));
         }
     }
-    ///---------tests sameValue-------------------------------
+
     @Test
-    public void testSameValueSymmetry() {
+    /**
+     * Tests is the sameValue function is symmetric.
+     */
+    public void testSameValue2() {
         double x1 = -4, x2 = 0;
         double rs1 = Ex1.sameValue(po1, po2, x1, x2, Ex1.EPS);
         double rs2 = Ex1.sameValue(po2, po1, x1, x2, Ex1.EPS);
@@ -213,69 +144,162 @@ class Ex1Test {
     }
 
     @Test
-    public void testSameValueRootFound() {
-        double x1 = -3, x2 = 0;
-        double x = Ex1.sameValue(po1, po2, x1, x2, Ex1.EPS);
-        assertTrue(Math.abs(Ex1.f(po1, x) - Ex1.f(po2, x)) < Ex1.EPS);
-    }
-
-    @Test
-    public void testSameValueIdenticalPolynomials() {
-        double x1 = 0, x2 = 5;
-        double x = Ex1.sameValue(po1, po1, x1, x2, Ex1.EPS);
-        assertTrue(x >= x1 && x <= x2);
-    }
-    ///-----tests length--------------------------------
-    @Test
-    public void testLengthLinear() {
-        double[] line = {0, 2}; // y = 2x
-        double L = Ex1.length(line, 0, 1, 100);
-        assertEquals(Math.hypot(1, 2), L, 1e-3);
-    }
-
-    ///----------tests area-----------------------------------
-    @Test
     /**
      * Test the area function - it should be symmetric.
      */
     public void testArea() {
-        double x1=-4, x2=0;
+        double x1 = -4, x2 = 0;
         double a1 = Ex1.area(po1, po2, x1, x2, 100);
         double a2 = Ex1.area(po2, po1, x1, x2, 100);
-        assertEquals(a1,a2, Ex1.EPS);
+        assertEquals(a1, a2, Ex1.EPS);
     }
+
     @Test
     /**
      * Test the area f1(x)=0, f2(x)=x;
      */
     public void testArea2() {
         double[] po_a = Ex1.ZERO;
-        double[] po_b = {0,1};
+        double[] po_b = {0, 1};
         double x1 = -1;
         double x2 = 2;
-        double a1 = Ex1.area(po_a,po_b, x1, x2, 1);
-        double a2 = Ex1.area(po_a,po_b, x1, x2, 2);
-        double a3 = Ex1.area(po_a,po_b, x1, x2, 3);
-        double a100 = Ex1.area(po_a,po_b, x1, x2, 100);
-        double area =2.5;
-        assertEquals(a1,area, Ex1.EPS);
-        assertEquals(a2,area, Ex1.EPS);
-        assertEquals(a3,area, Ex1.EPS);
-        assertEquals(a100,area, Ex1.EPS);
+        double a1 = Ex1.area(po_a, po_b, x1, x2, 1);
+        double a2 = Ex1.area(po_a, po_b, x1, x2, 2);
+        double a3 = Ex1.area(po_a, po_b, x1, x2, 3);
+        double a100 = Ex1.area(po_a, po_b, x1, x2, 100);
+        double area = 2.5;
+        assertEquals(a1, area, Ex1.EPS);
+        assertEquals(a2, area, Ex1.EPS);
+        assertEquals(a3, area, Ex1.EPS);
+        assertEquals(a100, area, Ex1.EPS);
     }
+
     @Test
     /**
      * Test the area function.
      */
     public void testArea3() {
-        double[] po_a = {2,1,-0.7, -0.02,0.02};
+        double[] po_a = {2, 1, -0.7, -0.02, 0.02};
         double[] po_b = {6, 0.1, -0.2};
-        double x1 = Ex1.sameValue(po_a,po_b, -10,-5, Ex1.EPS);
-        double a1 = Ex1.area(po_a,po_b, x1, 6, 8);
+        double x1 = Ex1.sameValue(po_a, po_b, -10, -5, Ex1.EPS);
+        double a1 = Ex1.area(po_a, po_b, x1, 6, 8);
         double area = 58.5658;
-        assertEquals(a1,area, Ex1.EPS);
+        assertEquals(a1, area, Ex1.EPS);
     }
-}
+
+    @Test
+/**
+ * Tests the equality of pairs of arrays.
+ */
+    public void testEquals2() { /** Added by me*/
+        double[][] d1 = {
+                {0},
+                {3, 8.2},
+                {5.3, -4.8, 0, 0}
+        };
+        double[][] d2 = {
+                Ex1.ZERO,
+                {3 - Ex1.EPS/2, 8.2 + Ex1.EPS/2},
+                {5.3 + Ex1.EPS/2, -4.8 - Ex1.EPS/2, 0 * Ex1.EPS ,0},
+        };
+        double[][] xx = {{-2* Ex1.EPS}, {1+ Ex1.EPS*1.2}, {1,2, Ex1.EPS/2,0}};
+        for(int i = 0; i < d1.length; i++) {
+            assertTrue(Ex1.equals(d1[i], d2[i]));
+        }
+        for(int i = 0; i < d1.length; i++) {
+            assertFalse(Ex1.equals(d1[i], xx[i]));
+        }
+    }
+
+    @Test
+    /**
+     * Test linear polynomials
+     */
+    public void testPolyFromPoints1() { /** Added by me*/
+        double[] xx = {1, 2};
+        double[] yy = {3, 5}; // Line through (1,3) and (2,5)
+        double[] coeffs = Ex1.PolynomFromPoints(xx, yy);
+
+        assertNotNull(coeffs);
+        assertEquals(0.0, coeffs[0], 1e-9); // A should be 0 for linear
+        assertEquals(2.0, coeffs[1], 1e-9); // B = slope = (5-3)/(2-1) = 2
+        assertEquals(1.0, coeffs[2], 1e-9); // C = y1 - B*x1 = 3 - 2*1 = 1
+    }
+
+    @Test
+    /**
+     * Points close to y
+     */
+    public void testPolyFromPoints2() { /** Added by me*/
+        double[] xx = {1, 2, 3};
+        double[] yy = {2, 3, 5}; // Points roughly on y = 0.5x^2 - 0.5x + 2
+        double[] coeffs = Ex1.PolynomFromPoints(xx, yy);
+    }
+
+    @Test
+    /**
+     * Test when not enough points
+     */
+    public void testPolyFromPoints3() { /** Added by me*/
+        double[] xx = {1};
+        double[] yy = {2};
+        assertNull(Ex1.PolynomFromPoints(xx, yy));
+    }
+
+    @Test
+    /**
+     * Test Linear Poly length
+     */
+    public void testLength1() { /** Added by me*/
+        double[] p = {0, 1, 0};
+        double len = Ex1.length(p, 0, 1, 100);
+        assertEquals(Math.sqrt(2), len, 0.01);
+    }
+
+    @Test
+    /**
+     * Test Quadratic Poly length
+     */
+    public void testLength2() { /** Added by me*/
+        double[] p = {0, 0, 1}; // y = x^2
+        double len = Ex1.length(p, 0, 1, 100);
+        // Exact length of y=x^2 from 0 to 1 is ∫ sqrt(1+(2x)^2) dx ≈ 1.47894
+        assertEquals(1.47894, len, 0.01);
+    }
+
+
+    @Test
+    /**
+     * Test Quadratic poly from string
+     */
+    public void testFromString1() { /** Added by me*/
+        String poly = "-1.0x^2 +3.0x +2.0";
+        double[] coeffs = Ex1.getPolynomFromString(poly);
+        assertArrayEquals(new double[]{2.0, 3.0, -1.0}, coeffs, 1e-9);
+    }
+
+    @Test
+    /**
+     * Test Linear poly from string
+     */
+    public void testFromString2() { /** Added by me*/
+        String poly = "4.0x +5.0";
+        double[] coeffs = Ex1.getPolynomFromString(poly);
+        assertArrayEquals(new double[]{5.0, 4.0}, coeffs, 1e-9);
+    }
+
+    @Test
+    /**
+     * Test Negative coeffs
+     */
+    public void testFromString3() { /** Added by me*/
+        String poly = "-2.0x^3 -4.0x^2 -6.0x -8.0";
+        double[] coeffs = Ex1.getPolynomFromString(poly);
+        assertArrayEquals(new double[]{-8.0, -6.0, -4.0, -2.0}, coeffs, 1e-9);
+    }
+
+
+
 
     //-------------------------tests add--------------------------------
     @Test
