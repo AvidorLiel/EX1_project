@@ -1,5 +1,4 @@
 package assignments.Ex1;
-
 /**
  * Introduction to Computer Science 2026, Ariel University,
  * Ex1: arrays, static functions and JUnit
@@ -76,7 +75,338 @@ public class Ex1 {
         }
     }
 
+    /**
+     * This function computes a polynomial representation from a set of 2D points on the polynom.
+     * The solution is based on: //	http://stackoverflow.com/questions/717762/how-to-calculate-the-vertex-of-a-parabola-given-three-points
+     * Note: this function only works for a set of points containing up to 3 points, else returns null.
+     *
+     * @param xx
+     * @param yy
+     * @return an array of doubles representing the coefficients of the polynom.
+     *
+     *if 2 points:
+     *      compute slope a and intercept b
+     *  if 3 points:
+     *      compute quadratic coefficients a, b, c
+     *  else:
+     *      return null
+     */
+    public static double[] PolynomFromPoints(double[] xx, double[] yy) {
+        if (xx == null || yy == null || xx.length != yy.length || xx.length < 2 || xx.length > 3) { /// check for invalid input
+            return null;
+        }
 
+        int n = xx.length; /// number of points
+        double[] ans;
+
+        if (n == 2) {
+            double x0 = xx[0], x1 = xx[1]; /// get the x coordinates
+            double y0 = yy[0], y1 = yy[1]; /// get the y coordinates
+
+            if (Double.compare(x0, x1) == 0) /// check for vertical line
+                return null;
+
+            double a = (y1 - y0) / (x1 - x0); /// compute slope
+            double b = y0 - a * x0; /// compute intercept
+
+            ans = new double[]{a, b}; /// return the coefficients
+
+        } else {
+            double x0 = xx[0], x1 = xx[1], x2 = xx[2]; /// get the x coordinates
+            double y0 = yy[0], y1 = yy[1], y2 = yy[2]; /// get the y coordinates
+
+            double denom = (x0 - x1)*(x0 - x2)*(x1 - x2); /// compute denominator
+            if (denom == 0) /// check for vertical line
+                return null;
+
+            double a = (x2 * (y1 - y0) + x1 * (y0 - y2) + x0 * (y2 - y1)) / denom; /// compute quadratic coefficients
+            double b = (x2 * x2 * (y0 - y1) + x1 * x1 * (y2 - y0) + x0 * x0 * (y1 - y2)) / denom; /// compute quadratic coefficients
+            double c = (x1 * x2 * (x1 - x2) * y0 + x2 * x0 * (x2 - x0) * y1 + x0 * x1 * (x0 - x1) * y2) / denom; /// compute quadratic coefficients
+
+            ans = new double[]{a, b, c}; /// return the coefficients
+        }
+
+        return ans;
+    }
+
+    /**
+     * Two polynomials functions are equal if and only if they have the same values f(x) for n+1 values of x,
+     * where n is the max degree (over p1, p2) - up to an epsilon (aka EPS) value.
+     *
+     * @param p1 first polynomial function
+     * @param p2 second polynomial function
+     * @return true iff p1 represents the same polynomial function as p2.
+     *for x from 0 to max degree:
+     *      compute f1(x) and f2(x)
+     *      if |f1 - f2| > EPS:
+     *          return false
+     *  return true
+     */
+    public static boolean equals(double[] p1, double[] p2) {
+        int n = Math.max(p1.length, p2.length) - 1;
+
+        double EPS = Ex1.EPS; /// use the same EPS as tests
+        for (int x = 0; x <= n; x++) { /// for x from 0 to max degree
+            double y1 = 0;
+            double y2 = 0;
+            for (int i = 0; i < p1.length; i++) { /// compute f1(x)
+                y1 += p1[i] * Math.pow(x, i); /// compute f1(x)
+            }
+            for (int i = 0; i < p2.length; i++) { /// compute f2(x)
+                y2 += p2[i] * Math.pow(x, i); /// compute f2(x)
+            }
+            if (Math.abs(y1 - y2) > EPS) { /// if |f1 - f2| > EPS
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Computes a String representing the polynomial function.
+     * For example the array {2,0,3.1,-1.2} will be presented as the following String  "-1.2x^3 +3.1x^2 +2.0"
+     *
+     * @param poly the polynomial function represented as an array of doubles
+     * @return String representing the polynomial function:
+     *  for each term from high degree to low:
+     *      skip zero
+     *      append sign and coefficient
+     *      append x^power if needed
+     *  return string
+     */
+    public static String poly(double[] poly) {
+        if (poly == null || poly.length == 0) /// check for empty polynom
+            return "0";
+
+        StringBuilder sb = new StringBuilder(); /// use StringBuilder for efficient string concatenation
+        int n = poly.length - 1; /// degree of the polynomial
+        boolean firstTerm = true; /// flag for first term
+
+        for (int i = n; i >= 0; i--) { /// for each term from high degree to low
+            double coef = poly[i]; /// get coefficient
+            if (Math.abs(coef) < 1e-9) /// skip zero
+                continue;
+
+            if (coef > 0 && !firstTerm) { /// append sign and coefficient
+                sb.append(" +"); /// positive sign
+            } else if (coef < 0) { /// negative sign
+                sb.append(firstTerm ? "-" : " -"); /// negative sign
+            }
+
+            double absCoef = Math.abs(coef); /// absolute value of coefficient
+
+            if (!(absCoef == 1 && i != 0)) { /// skip coefficient 1 for non-constant terms
+                sb.append(absCoef); /// append coefficient``
+            }
+
+            if (i >= 1) { /// append x^power if needed
+                sb.append("x"); /// append x
+                if (i > 1) /// append power
+                    sb.append("^").append(i); /// append power
+            }
+
+            firstTerm = false; /// update first term flag
+        }
+        if (sb.length() == 0) /// check if all coefficients were zero
+            return "0";
+
+        return sb.toString();
+    }
+
+    /**
+     * Given two polynomial functions (p1,p2), a range [x1,x2] and an epsilon eps. This function computes an x value (x1<=x<=x2)
+     * for which |p1(x) -p2(x)| < eps, assuming (p1(x1)-p2(x1)) * (p1(x2)-p2(x2)) <= 0.
+     *
+     * @param p1  - first polynomial function
+     * @param p2  - second polynomial function
+     * @param x1  - minimal value of the range
+     * @param x2  - maximal value of the range
+     * @param eps - epsilon (positive small value (often 10^-3, or 10^-6).
+     * @return an x value (x1<=x<=x2) for which |p1(x) - p2(x)| < eps.
+     *
+     * use binary search:
+     *      mid = (x1 + x2)/2
+     *      compute f = p1(mid) - p2(mid)
+     *      if |f| < eps: return mid
+     *      else recurse on half with sign change
+     */
+    public static double sameValue(double[] p1, double[] p2, double x1, double x2, double eps) {
+        double f1 = f(p1, x1) - f(p2, x1); /// compute f(x1)
+        double f2 = f(p1, x2) - f(p2, x2); /// compute f(x2)
+
+        if (Math.abs(f1) < eps) return x1; /// check if f(x1) is close enough
+        if (Math.abs(f2) < eps) return x2; /// check if f(x2) is close enough
+
+        double mid = 0; /// initialize mid variable
+
+        while ((x2 - x1) > eps) { /// loop until the range is smaller than eps
+            mid = (x1 + x2) / 2; /// compute mid point
+            double fm = f(p1, mid) - f(p2, mid); /// compute f(mid)
+
+            if (Math.abs(fm) < eps) return mid; /// check if f(mid) is close enough
+
+            if (f1 * fm <= 0) { /// check which half to recurse on
+                x2 = mid; /// recurse on [x1, mid]
+                f2 = fm; /// update f(x2)
+
+            }
+            else {    /// recurse on [mid, x2]
+                x1 = mid; /// update x1
+                f1 = fm; /// update f(x1
+            }
+        }
+
+        return (x1 + x2) / 2; /// return mid point as approximation
+    }
+
+    /**
+     * Given a polynomial function (p), a range [x1,x2] and an integer with the number (n) of sample points.
+     * This function computes an approximation of the length of the function between f(x1) and f(x2)
+     * using n inner sample points and computing the segment-path between them.
+     * assuming x1 < x2.
+     * This function should be implemented iteratively (none recursive).
+     *
+     * @param p                - the polynomial function
+     * @param x1               - minimal value of the range
+     * @param x2               - maximal value of the range
+     * @param numberOfSegments - (A positive integer value (1,2,...).
+     * @return the length approximation of the function between f(x1) and f(x2).
+     *  divide [x1,x2] into n segments
+     *  sum sqrt((dx)^2 + (dy)^2) for each segment
+     */
+    public static double length(double[] p, double x1, double x2, int numberOfSegments) {
+        if (p == null || numberOfSegments <= 0) /// check for invalid input
+            return 0.0;
+        if (x1 == x2) /// check for zero length
+            return 0.0;
+
+        if (x2 < x1) { /// ensure x1 < x2
+            double tmp = x1; x1 = x2; x2 = tmp; /// swap x1 and x2
+        }
+
+        double dx = (x2 - x1) / numberOfSegments; /// compute segment width
+        double prevX = x1; /// initialize previous x
+        double prevY = f(p, prevX); /// initialize previous y
+        double total = 0.0; /// initialize total length
+
+        for (int i = 1; i <= numberOfSegments; i++) { /// iterate over segments
+            double curX = x1 + i * dx; /// compute current x
+            double curY = f(p, curX); /// compute current y
+            total += Math.hypot(curX - prevX, curY - prevY); /// add segment length to total
+            prevX = curX;
+            prevY = curY;
+        }
+
+        return total;
+    }
+
+    /**
+     * Given two polynomial functions (p1,p2), a range [x1,x2] and an integer representing the number of Trapezoids between the functions (number of samples in on each polynom).
+     * This function computes an approximation of the area between the polynomial functions within the x-range.
+     * The area is computed using Riemann's like integral (https://en.wikipedia.org/wiki/Riemann_integral)
+     *
+     * @param p1                - first polynomial function
+     * @param p2                - second polynomial function
+     * @param x1                - minimal value of the range
+     * @param x2                - maximal value of the range
+     * @param numberOfTrapezoid - a natural number representing the number of Trapezoids between x1 and x2.
+     * @return the approximated area between the two polynomial functions within the [x1,x2] range.
+     *
+     * find all points where p1 - p2 changes sign
+     *  split interval at these roots
+     *  sum trapezoid areas in each interval
+     */
+    public static double area(double[] p1, double[] p2, double x1, double x2, int numberOfTrapezoid) {
+        if (p1 == null || p2 == null) ///  check for null polynoms
+            throw new IllegalArgumentException("Null polynomial.");
+        if (p1.length == 0 || p2.length == 0) /// check for empty polynoms
+            throw new IllegalArgumentException("Empty polynomial.");
+        if (Double.isNaN(x1) || Double.isNaN(x2)) /// check for NaN range
+            throw new IllegalArgumentException("NaN range.");
+        if (numberOfTrapezoid <= 0) /// check for valid number of trapezoids
+            throw new IllegalArgumentException("numberOfTrapezoid must be > 0.");
+        if (x1 == x2) /// zero area
+            return 0.0;
+        if (x2 < x1) /// ensure x1 < x2
+        {
+            double t = x1; x1 = x2; x2 = t; /// swap x1 and x2
+        }
+
+        final double EPS = 1e-9; /// small epsilon for root finding
+        final int N = numberOfTrapezoid; /// number of segments
+        java.util.ArrayList<Double> grid = new java.util.ArrayList<>(N + 32); /// grid points
+        for (int k = 0; k <= N; k++)  /// create initial grid
+        {
+            double xk = x1 + (x2 - x1) * k / N; /// compute grid point
+            grid.add(xk);
+        }
+
+        java.util.ArrayList<Double> roots = new java.util.ArrayList<>(); /// list of roots
+        double prevX = grid.getFirst(); /// previous x
+        double prevD = f(p1, prevX) - f(p2, prevX); /// previous difference
+
+        for (int i = 1; i < grid.size(); i++) { /// find roots
+            double currX = grid.get(i);
+            double currD = f(p1, currX) - f(p2, currX);
+
+            boolean signChange = (prevD == 0.0) || (currD == 0.0) || (prevD * currD < 0.0); /// check for sign change
+            if (signChange && (currX - prevX) > EPS) { /// find root in interval
+                double r = sameValue(p1, p2, prevX, currX, EPS);
+                if (r > prevX + EPS && r < currX - EPS) { /// add root if valid
+                    roots.add(r);
+                }
+            }
+            prevX = currX;
+            prevD = currD;
+        }
+        grid.addAll(roots); /// add roots to grid
+        java.util.Collections.sort(grid);
+
+        java.util.ArrayList<Double> xs = new java.util.ArrayList<>(grid.size()); /// unique grid points
+        for (double x : grid) { /// remove duplicates
+            if (xs.isEmpty() || Math.abs(x - xs.get(xs.size() - 1)) > 1e-12) { ///
+                xs.add(x);
+            }
+        }
+
+        boolean refined;
+        int safeGuard = 0;
+        do {
+            refined = false;
+            java.util.ArrayList<Double> insert = new java.util.ArrayList<>(); /// new roots to insert
+            for (int i = 1; i < xs.size(); i++) { /// refine intervals
+                double a = xs.get(i - 1), b = xs.get(i);
+                double da = f(p1, a) - f(p2, a);
+                double db = f(p1, b) - f(p2, b);
+                if ((da == 0.0 || db == 0.0 || da * db < 0.0) && (b - a) > EPS) { /// check for sign change
+                    double r = sameValue(p1, p2, a, b, EPS);
+                    if (r > a + EPS && r < b - EPS) { /// add new root
+                        insert.add(r);
+                        refined = true;
+                    }
+                }
+            }
+            if (refined) { /// insert new roots
+                xs.addAll(insert);
+                java.util.Collections.sort(xs);
+                java.util.ArrayList<Double> tmp = new java.util.ArrayList<>(xs.size());
+                for (double x : xs) { /// remove duplicates
+                    if (tmp.isEmpty() || Math.abs(x - tmp.get(tmp.size() - 1)) > 1e-12) /// check for duplicates
+                        tmp.add(x);
+                }
+                xs = tmp;
+            }
+            safeGuard++;
+        } while (refined && safeGuard < 4); /// limit iterations
+        double area = 0.0;
+        for (int i = 1; i < xs.size(); i++) { /// compute area using trapezoids
+            double a = xs.get(i - 1), b = xs.get(i);
+            double fa = Math.abs(f(p1, a) - f(p2, a));
+            double fb = Math.abs(f(p1, b) - f(p2, b));
+            area += (b - a) * (fa + fb) * 0.5;
+        }
+        return area;
+    }
 
     /**
      * This function computes the array representation of a polynomial function from a String
@@ -425,4 +755,4 @@ public class Ex1 {
         /// return the derivative polynom in a new array
         return ans;
     }
-}
+
