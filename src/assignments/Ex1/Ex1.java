@@ -221,36 +221,71 @@ public class Ex1 {
      *      return ans
      * @return
      */
-    /// to make sure that p1 is the longer polynom I will write a function named replace
-    public static void replace(double[] p1, double[] p2) { /// the function is void because it (will\will not) just swap the references of the two polynoms
-    /// if (p1.length > p2.length || p1.length == p2.length) then continue as it is
-        if (p2.length > p1.length) {
+    public static double[] compact(double[] p) {
+        int i=0;
+        while(p[i]!=0 && i<p.length-1)
+        {
+            i++;
+        }
+        double[] ans = new double[i];
+        for (int j=0; j<ans.length; j++)
+        {
+            ans[j] = p[j];
+        }
+        return ans;
+    }
+    public static double[] add(double[] p1, double[] p2) {
+
+       /// first we will compact both polynoms to make sure that there are no unnecessary zeros at the beginning of the polynoms
+       if (p1 != null && p1.length>0)
+            p1=compact(p1);
+        if (p2 != null && p2.length>0)
+            p2=compact(p2);
+        int len1, len2;
+        /// find the lengths of both polynoms
+        if(p1 != null && p1.length>0)
+            len1= p1.length;
+        else {
+            len1=0;
+        }
+        if (p2 != null && p2.length>0)
+            len2= p2.length;
+        else {
+            len2=0;
+        }
+        /// to make sure that p1 is the longer polynom
+        /// if (p1.length > p2.length || p1.length == p2.length) then continue as it is, else swap p1 and p2, so p1 will always be the longer polynom
+        if (len2 > len1) {
             double[] temp = p1;
             p1 = p2;
             p2 = temp;
+            /// swap lengths as well
+            int tempLen = len1;
+            len1 = len2;
+            len2 = tempLen;
         }
-    }
-    public static double[] add(double[] p1, double[] p2) {
         double[] ans;
-        replace(p1, p2); /// make sure that p1 is the longer polynom
-        if (p1 == null && p2 == null)
+        /// if both polynoms are empty return ZERO
+        if ((p1 == null && len1==0) && (p2 == null || len2==0))
           return ZERO; /// return {0}
-        if (p1 == null && p2!=null )
-               ans = p2; /// if p1 is empty return p2 bcause p2 + 0 = p2
-        if (p2 == null && p1!=null )
-               ans = p1; /// if p2 is empty return p1 because p1 + 0 = p1
-
-        int len=p1.length-p2.length; /// here we find the difference between the lengths of p1 and p
-        ans = new double[p1.length]; /// because p1 is longer so it has the max elements that ans will have when we add p1+p2
+        if ((p1 == null || len1>0) && (p2!=null && len2>0)) {
+            ans = p2; /// if p1 is empty return p2 bcause p2 + 0 = p2
+            return ans;
+        }
+        if ((p2 == null || len2==0) && (p1!=null && len1>0)) {
+            ans = p1; /// if p2 is empty return p1 because p1 + 0 = p1
+        return ans;
+        }
+        int len=len1-len2; /// here we find the difference between the lengths of p1 and p
+        ans = new double[len1]; /// because p1 is longer so it has the max elements that ans will have when we add p1+p2
         if(len!=0) { /// check if len is not zero because if it is zero that means that both polynoms have the same length so there is no need to add the first len elements from p1 to ans
             for (int i = 0; i < len; i++) { /// we will run this loop len times because we want to add all the elements from the first element of p1 which dont have a the same power as in p2
                 ans[i] = p1[i]; /// put into ans the first len elements from p1 because p2 has no elements in these pow
             }
         }
-        for(int i=0; i<p2.length; i++) { ///we will run this loop p2.length times because we want to add all the elements from the first element of p2
+        for(int i=0; i<len2; i++) { ///we will run this loop p2.length times because we want to add all the elements from the first element of p2
             ans[i + len] = p2[i] + p1[i + len]; /// add the rest of the elements from p1 and p2
         }
-
 
         return ans;
     }
@@ -258,17 +293,87 @@ public class Ex1 {
     /**
      * This function computes the polynomial function which is the multiplication of two polynoms (p1,p2)
      *
-     * @param p1
-     * @param p2
-     * @return
+    
+    
+    
      */
     public static double[] mul(double[] p1, double[] p2) {
-        double[] ans = ZERO;//
-        /** add you code below
+        /// first we will compact both polynoms to make sure that there are no unnecessary zeros at the beginning of the polynoms
+        if (p1 != null && p1.length>0)
+            p1=compact(p1);
+        if (p2 != null && p2.length>0)
+            p2=compact(p2);
+        int len1, len2;
+        /// find the lengths of both polynoms
+         if(p1 != null && p1.length>0)
+             len1= p1.length;
+         else {
+             len1 = 0;
+         }
+         if (p2 != null && p2.length>0)
+             len2= p2.length;
+            else {
+                len2 = 0;
+            /// to make sure that p1 is the longer polynom
+            /// if (p1.length > p2.length || p1.length == p2.length) then continue as it is, else swap p1 and p2, so p1 will always be the longer polynom
+            if (len2 > len1) {
+                double[] temp = p1;
+                p1 = p2;
+                p2 = temp;
+                /// swap lengths as well
+                int tempLen = len1;
+                len1 = len2;
+                len2 = tempLen;
+            }
+            int len=len1-len2; /// here we find the difference between the lengths of p1 and p
+            ans = new double[len1]; /// because p1 is longer so it has the max elements that ans will have when we add p1+p2
+             if(p1==null || p2==null)   /// if one of the polynoms is null then the answer is null because multiplying by null is not defined
+             {
+                ans=null;
+                return ans;
+             }
+         }
+             if(len!=0) {  /// check if len is not zero because if it is zero that means that both polynoms have the same length so there is no need to add the first len elements from p1 to ans
+               int index1=len1-1;
+               for (int i=len; i > 0; i--) {  /// we will run this loop len times because we want to mul all the elements from the first element of p1 which dont have a the same power as in p2
+                    ans[index1] = p1[index1];  /// put into ans the first len elements from p1 because p2 has no elements in these pow
+                    index1--;
+           }
+           int i=len-1;
+           int j=len2-1;
+           int index=len2-1;
+           while(i>=0 && j>=0) { /// we will run this loop p2.length times because we want to mul all the elements from the first element of p2
+               ans[index]=p1[i]*p2[j];
+                i--;
+                j--;
+                index--;
+           }
+
+           }
+           else  /// if both polynoms have the same length and one of them is {1} then the answer is the other polynom
+           {
+               if (len1==1 && p1[0] ==1) {   /// if p1 is {1} then the answer is p2 because 1*p2 = p2
+                   ans= p2;
+               }
+               else if (len2==1 && p2[0] ==1) {  /// if p2 is {1} then the answer is p1 because 1*p1 = p1
+                   ans = p1;
+               }
+               else if(p1==ZERO || p2==ZERO) {   /// if one of the polynoms is ZERO then the answer is ZERO because 0*p1 =0
+                   ans= ZERO;
+               }
+           }
 
          /////////////////// */
         return ans;
     }
+
+
+
+
+
+
+
+
 
     /**
      * This function computes the derivative of the p0 polynomial function.
