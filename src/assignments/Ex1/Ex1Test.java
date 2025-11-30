@@ -161,6 +161,89 @@ class Ex1Test {
 		double[] p21 = Ex1.mul(po2, po1);
 		assertTrue(Ex1.equals(p12, p21));
 	}
+    /// -------------------------tests mul--------------------------------
+    ///
+    @Test
+    void testMulBasic() {
+        double[] p1 = {1, 2};                     // [1] Polynomial: 2x + 1
+        double[] p2 = {3, 4};                     // [2] Polynomial: 4x + 3
+        double[] expected = {3, 10, 8};           // [3] Result: (1*3), (1*4 + 2*3), (2*4) → 3 + 10x + 8x²
+        assertTrue(Ex1.equals(Ex1.mul(p1, p2), expected)); // [4] Verify multiplication works for basic case
+    }
+
+
+    @Test
+    void testMulWithNull() {
+        double[] p1 = null;                       // [1] First polynomial is null
+        double[] p2 = {1, 2};                     // [2] Second polynomial: 2x + 1
+        double[] expected = null;                 // [3] Multiplication with null should return null
+        assertNull(Ex1.mul(p1, p2));              // [4] Verify result is null
+    }
+
+
+    @Test
+    void testMulBothNull() {
+        double[] p1 = null;                       // [1] First polynomial is null
+        double[] p2 = null;                       // [2] Second polynomial is null
+        double[] expected = null;                 // [3] Multiplication with both null should return null
+        assertNull(Ex1.mul(p1, p2));              // [4] Verify result is null
+    }
+
+
+    @Test
+    void testMulWithZeroPolynomial() {
+        double[] p1 = {0};                        // [1] First polynomial is ZERO
+        double[] p2 = {1, 2, 3};                  // [2] Second polynomial: 3x² + 2x + 1
+        double[] expected = {0};                  // [3] ZERO times anything is ZERO
+        assertTrue(Ex1.equals(Ex1.mul(p1, p2), expected)); // [4] Verify multiplication with ZERO returns ZERO
+    }
+
+
+    @Test
+    void testMulWithIdentityPolynomial() {
+        double[] p1 = {1};                        // [1] First polynomial is identity: 1
+        double[] p2 = {4, 5, 6};                  // [2] Second polynomial: 6x² + 5x + 4
+        double[] expected = {4, 5, 6};            // [3] 1 * p2 = p2
+        assertTrue(Ex1.equals(Ex1.mul(p1, p2), expected)); // [4] Verify multiplication with identity returns other polynomial
+    }
+
+
+    @Test
+    void testMulWithTrailingZeros() {
+        double[] p1 = {1, 2, 0};                  // [1] Polynomial with trailing zero
+        double[] p2 = {3, 0};                     // [2] Polynomial with trailing zero
+        double[] expected = {3, 6, 0};            // [3] Result after compact: (1*3), (1*0 + 2*3), (2*0)
+        assertTrue(Ex1.equals(Ex1.mul(p1, p2), expected)); // [4] Verify compact works before multiplication
+    }
+
+
+    @Test
+    void testMulNegativeCoefficients() {
+        double[] p1 = {-1, 2};                    // [1] Polynomial: 2x - 1
+        double[] p2 = {3, -4};                    // [2] Polynomial: -4x + 3
+        double[] expected = {-3, 10, -8};         // [3] Result: (-1*3), (-1*-4 + 2*3), (2*-4)
+        assertTrue(Ex1.equals(Ex1.mul(p1, p2), expected)); // [4] Verify multiplication works with negatives
+    }
+
+
+    @Test
+    void testMulEmptyArrays() {
+        double[] p1 = {};                         // [1] First polynomial is empty
+        double[] p2 = {1, 2};                     // [2] Second polynomial: 2x + 1
+        double[] expected = null;                 // [3] Multiplication with empty array should return null
+        assertNull(Ex1.mul(p1, p2));              // [4] Verify result is null
+    }
+
+
+    @Test
+    void testMulLargePolynomials() {
+        double[] p1 = {1, 2, 3};                  // [1] Polynomial: 3x² + 2x + 1
+        double[] p2 = {4, 5};                     // [2] Polynomial: 5x + 4
+        double[] expected = {4, 13, 22, 15};      // [3] Result: multiply term by term
+        assertTrue(Ex1.equals(Ex1.mul(p1, p2), expected)); // [4] Verify multiplication works for larger polynomials
+    }
+
+    /// -------------------------end of tests mul--------------------------------
 	@Test
 	/**
 	 * Tests that p1(x) * p2(x) = (p1*p2)(x),
@@ -210,7 +293,7 @@ class Ex1Test {
 
     @Test
     void testDerivativeEmptyArray() {
-        double[] p = {};                            /// [1] Polynomial is empty
+        double[] p = {};                            // [1] Polynomial is empty
         double[] expected = {0};                    /// [2] Expected result: ZERO polynomial
         assertTrue(Ex1.equals(Ex1.derivative(p), expected)); /// [3] Verify derivative of empty array returns ZERO
     }
